@@ -2,6 +2,8 @@ package com.eventmanager.backend.controller;
 
 import com.eventmanager.backend.dto.RegisterRequest;
 import com.eventmanager.backend.dto.UserResponse;
+import com.eventmanager.backend.dto.LoginRequest;
+import com.eventmanager.backend.dto.LoginResponse;
 import com.eventmanager.backend.model.User;
 import com.eventmanager.backend.service.UserService;
 import jakarta.validation.Valid;
@@ -36,4 +38,13 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+        @Valid @RequestBody LoginRequest request) {
+
+    LoginResponse response = userService.login(request);
+
+    return ResponseEntity.ok(response);
+}
 }
