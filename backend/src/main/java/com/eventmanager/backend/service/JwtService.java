@@ -1,62 +1,43 @@
 package com.eventmanager.backend.service;
 
-import io.jsonwebtoken.Jwts;
+import com.eventmanager.backend.model.User;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-
 @Service
 public class JwtService {
+  private final SecretKey key;
+  private final long expiration;
 
-    @Value("${jwt.secret}")
-    private String secret;
+  public JwtService(
+      @Value("${jwt.secret}") String secret, @Value("${jwt.expiration:3600000}") long expiration) {
+    this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    this.expiration = expiration;
+  }
 
-    @Value("${jwt.expiration}")
-    private long expiration;
+  public String generateToken(User user) {
+    Date now = new Date();
+    return Jwts.builder()
+        .issuer("event-manager")
+        .subject(user.getId())
+        .claim("version", user.getTokenVersion())
+        .issuedAt(now)
+        .expiration(new Date(now.getTime() + expiration))
+        .signWith(key)
+        .compact();
+  }
 
-    private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(
-                secret.getBytes(StandardCharsets.UTF_8)
-        );
-    }
-
-    public String generateToken(String email, String role) {
-
-        Date now = new Date();
-        Date expirationDate = new Date(now.getTime() + expiration);
-
-        return Jwts.builder()
-                .subject(email)
-                .claim("role", role)
-                .issuedAt(now)
-                .expiration(expirationDate)
-                .signWith(getSigningKey())
-                .compact();
-    }
-
-    public String extractEmail(String token) {
+  public Claims parse(String token) {
     return Jwts.parser()
-            .verifyWith(getSigningKey())
-            .build()
-            .parseSignedClaims(token)
-            .getPayload()
-            .getSubject();
-}
-
-    public boolean isTokenValid(String token) {
-        try {
-            Jwts.parser()
-                    .verifyWith(getSigningKey())
-                    .build()
-                    .parseSignedClaims(token);
-
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
+        .requireIssuer("event-manager")
+        .verifyWith(key)
+        .build()
+        .parseSignedClaims(token)
+        .getPayload();
+  }
 }

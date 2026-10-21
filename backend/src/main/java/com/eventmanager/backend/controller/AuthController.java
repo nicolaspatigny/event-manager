@@ -1,50 +1,55 @@
 package com.eventmanager.backend.controller;
 
-import com.eventmanager.backend.dto.RegisterRequest;
-import com.eventmanager.backend.dto.UserResponse;
-import com.eventmanager.backend.dto.LoginRequest;
-import com.eventmanager.backend.dto.LoginResponse;
+import com.eventmanager.backend.dto.*;
 import com.eventmanager.backend.model.User;
 import com.eventmanager.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 public class AuthController {
+  private final UserService users;
 
-    private final UserService userService;
+  public AuthController(UserService users) {
+    this.users = users;
+  }
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
+  @PostMapping("/auth/register")
+  @ResponseStatus(HttpStatus.CREATED)
+  public UserResponse register(@Valid @RequestBody Requests.Register input) {
+    return users.view(users.register(input));
+  }
 
-    @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(
-            @Valid @RequestBody RegisterRequest request) {
+  @PostMapping("/auth/login")
+  public LoginResponse login(@Valid @RequestBody Requests.Login input) {
+    return users.login(input);
+  }
 
-        User user = userService.register(request);
+  @PostMapping("/auth/logout")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void logout(@AuthenticationPrincipal User user) {
+    users.revoke(user);
+  }
 
-        UserResponse response = new UserResponse(
-                user.getId(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getRole(),
-                user.getCreatedAt()
-        );
+  @GetMapping("/me")
+  public UserResponse me(@AuthenticationPrincipal User user) {
+    return users.view(user);
+  }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+  @PutMapping("/me")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void profile(
+      @AuthenticationPrincipal User user, @Valid @RequestBody Requests.Profile input) {
+    users.profile(user, input);
+  }
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(
-        @Valid @RequestBody LoginRequest request) {
-
-    LoginResponse response = userService.login(request);
-
-    return ResponseEntity.ok(response);
-}
+  @PutMapping("/me/password")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void password(
+      @AuthenticationPrincipal User user, @Valid @RequestBody Requests.Password input) {
+    users.password(user, input);
+  }
 }

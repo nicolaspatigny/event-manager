@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite name="com.eventmanager.backend.PlatformIntegrationTests" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-10-21T04:51:08.179Z" hostname="d8c6280bec47" time="6.314">
+  <testcase name="expiredAndTamperedTokensAreRejected()" classname="com.eventmanager.backend.PlatformIntegrationTests" time="0.37" />
+  <testcase name="profileExportAndErasure()" classname="com.eventmanager.backend.PlatformIntegrationTests" time="0.597" />
+  <testcase name="authenticationValidationAndEmailUniqueness()" classname="com.eventmanager.backend.PlatformIntegrationTests" time="0.594" />
+  <testcase name="logoutAndPasswordChangeRevokeTokens()" classname="com.eventmanager.backend.PlatformIntegrationTests" time="0.498" />
+  <testcase name="eventOwnershipValidationAndOptimisticConcurrency()" classname="com.eventmanager.backend.PlatformIntegrationTests" time="0.383" />
+  <testcase name="registrationCapacityDuplicatesCancellationAndHistory()" classname="com.eventmanager.backend.PlatformIntegrationTests" time="0.431" />
+  <testcase name="simultaneousDuplicateRegistrationIsAtomic()" classname="com.eventmanager.backend.PlatformIntegrationTests" time="0.289" />
+  <testcase name="capacityCannotBeReducedBelowRegistrationsAndPastEventsRejectRegistration()" classname="com.eventmanager.backend.PlatformIntegrationTests" time="0.452" />
+  <testcase name="categoriesSearchPaginationAndAudit()" classname="com.eventmanager.backend.PlatformIntegrationTests" time="0.276" />
+  <testcase name="healthChecksApplicationReadinessAndMongoDB()" classname="com.eventmanager.backend.PlatformIntegrationTests" time="0.022" />
+  <testcase name="adminRoleChangesAndDisabledAccountsInvalidateExistingTokens()" classname="com.eventmanager.backend.PlatformIntegrationTests" time="0.353" />
+  <testcase name="simultaneousRegistrationsNeverOversell()" classname="com.eventmanager.backend.PlatformIntegrationTests" time="1.061" />
+  <testcase name="anonymousAndInsufficientRolesAreRejected()" classname="com.eventmanager.backend.PlatformIntegrationTests" time="0.119" />
+  </testsuite>

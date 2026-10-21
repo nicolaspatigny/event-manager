@@ -1,0 +1,64 @@
+{
+  "verifiedAt": "2026-10-21T06:58:23.149372+02:00",
+  "baseCommit": "9e31b9e3c30178095ef26130a5420e3c608662bb",
+  "implementationInWorkingTree": true,
+  "backend": [
+    {
+      "name": "com.eventmanager.backend.BackendApplicationTests",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "timestamp": "2026-10-21T04:51:05.533Z",
+      "cases": [
+        "contextLoads()"
+      ]
+    },
+    {
+      "name": "com.eventmanager.backend.PlatformIntegrationTests",
+      "tests": "13",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "timestamp": "2026-10-21T04:51:08.179Z",
+      "cases": [
+        "expiredAndTamperedTokensAreRejected()",
+        "profileExportAndErasure()",
+        "authenticationValidationAndEmailUniqueness()",
+        "logoutAndPasswordChangeRevokeTokens()",
+        "eventOwnershipValidationAndOptimisticConcurrency()",
+        "registrationCapacityDuplicatesCancellationAndHistory()",
+        "simultaneousDuplicateRegistrationIsAtomic()",
+        "capacityCannotBeReducedBelowRegistrationsAndPastEventsRejectRegistration()",
+        "categoriesSearchPaginationAndAudit()",
+        "healthChecksApplicationReadinessAndMongoDB()",
+        "adminRoleChangesAndDisabledAccountsInvalidateExistingTokens()",
+        "simultaneousRegistrationsNeverOversell()",
+        "anonymousAndInsufficientRolesAreRejected()"
+      ]
+    }
+  ],
+  "browser": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "scenarios": [
+      "public catalogue, filters, detail and mobile layout",
+      "participant registration, booking, profile export and cancellation",
+      "organizer publishes, edits, views roster and cancels an event",
+      "administrator manages categories, accounts and audit log"
+    ]
+  },
+  "dockerSmoke": "passed: Nginx/CSP, authenticated MongoDB, login, booking, dashboard, logout, mobile layout, no browser errors",
+  "nativeDevelopmentSmoke": "passed: scripts/dev.sh, readiness, Angular API proxy, signup, login, account cleanup",
+  "remoteCI": "workflow supplied, not executed remotely",
+  "productionDeployment": "not published; operational hardening documented",
+  "npmProductionAudit": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  }
+}

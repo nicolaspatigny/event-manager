@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite name="com.eventmanager.backend.BackendApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-21T04:51:05.533Z" hostname="d8c6280bec47" time="2.642">
+  <testcase name="contextLoads()" classname="com.eventmanager.backend.BackendApplicationTests" time="0.462" />
+  </testsuite>

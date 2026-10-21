@@ -1,2 +1,11 @@
 .env
 .env.*
+!.env.example
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/test-results/
+frontend/playwright-report/
+artifacts/
+*.log
+docs/tools/node_modules/

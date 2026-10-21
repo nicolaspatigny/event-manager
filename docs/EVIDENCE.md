@@ -1,0 +1,75 @@
+# Preuves et traçabilité
+
+Ce fichier recense uniquement les vérifications effectivement exécutées dans l’environnement
+courant. Les résultats finaux figurent dans le tableau ajouté après validation.
+
+Sources des preuves : code et diff Git, rapports JUnit, rapport Playwright, captures de
+parcours avec données fictives, builds, configuration de déploiement. Les artefacts
+volumineux sont ignorés par Git ; les joindre à la remise si nécessaire. Aucun historique
+de commits, ticket externe, réunion ou retour client n’a été fabriqué.
+
+Ne jamais joindre `.env`, les variables de processus, les mots de passe, les jetons ou les
+logs complets non relus. Les captures test utilisent exclusivement des comptes fictifs.
+
+## Collecte proposée
+
+| Preuve | Emplacement | Interprétation |
+|---|---|---|
+| Résultats JUnit | backend/build/test-results/test/*.xml | tests terminés et nombre exact |
+| Rapport lisible | backend/build/reports/tests/test | détail des scénarios API |
+| Rapport navigateur | frontend/playwright-report | parcours frontend/API réels |
+| Captures | artifacts/screenshots | interface avec données de démonstration |
+| Tests et règles | docs/TESTS.md | correspondance exigences/vérifications |
+| Configuration CI | .github/workflows/ci.yml | pipeline livré ; exécution distante non attestée |
+| Source présentée | git status / git diff / git rev-parse HEAD | identité réelle du code, pas d’historique inventé |
+
+
+## Validation finale — 21 octobre 2026
+
+| Vérification exécutée | Résultat observé |
+|---|---|
+| JUnit / API réelle / MongoDB | **14 tests passés, 0 échec, 0 ignoré** |
+| Playwright / Chromium | **4 parcours passés, 0 échec, 0 ignoré** |
+| Build backend et JAR | réussi |
+| Build Angular de production | réussi ; bundle initial environ 404 ko |
+| Formatage Java / Prettier / diff Git | vérifications passées |
+| Audit npm, dépendances de production | 0 vulnérabilité connue au moment du contrôle |
+| Images Docker backend et frontend | construites avec TLS vérifié et secrets BuildKit temporaires |
+| Application Docker / MongoDB authentifié | parcours connexion, réservation, tableau de bord et déconnexion validé |
+| Démarrage natif scripts/dev.sh | proxy Angular, readiness et parcours compte validés ; processus de test arrêtés |
+| Jeu fictif scripts/seed-demo.mjs | exécuté puis réexécuté sans doubler les six événements |
+| Diagrammes Mermaid | 5 diagrammes interprétés et exportés en SVG |
+| CI GitHub distante | fournie, non exécutée ici |
+| Publication cloud / mise en production | non effectuée |
+
+Le site OWASP a refusé l’accès direct (403) ; la liste 2025 a été vérifiée à partir du
+dépôt GitHub officiel OWASP. Les téléchargements Playwright étant interdits sur ce
+réseau, les tests ont utilisé Chromium système, sans désactivation de vérification TLS.
+Un défaut de permissions de configuration Nginx a été corrigé puis le conteneur retesté.
+
+Résultats détaillés : [verification.json](evidence/verification.json), [manifeste des
+sources](evidence/source-manifest.sha256) et rapports JUnit anonymisés dans
+[evidence/junit](evidence/junit). Le manifeste identifie les sources vérifiées, sans
+prétendre que les changements ont été commités ou poussés.
+
+### Captures réellement produites (données fictives)
+
+- [Agenda desktop — six événements](evidence/screenshots/08-container-home.png).
+- [Agenda mobile](evidence/screenshots/09-container-mobile.png).
+- [Tableau de bord participant](evidence/screenshots/10-container-dashboard.png).
+- [Détail d’événement](evidence/screenshots/02-event-detail.png).
+- [Espace organisateur](evidence/screenshots/05-organizer-event.png).
+- [Administration](evidence/screenshots/06-administration.png).
+- [Journal d’activité](evidence/screenshots/07-audit.png).
+
+Ces preuves témoignent de la livraison technique dans cet environnement ; elles ne
+remplacent pas l’acceptation pédagogique, l’analyse personnelle, l’audit de production
+ou les tests humains d’accessibilité. Les configurations privées restent hors du dépôt.
+
+### Aperçus intégrés
+
+![Agenda de démonstration, six événements fictifs](evidence/screenshots/08-container-home.png)
+
+![Tableau de bord participant fictif](evidence/screenshots/10-container-dashboard.png)
+
+![Administration avec comptes de test](evidence/screenshots/06-administration.png)
