@@ -100,3 +100,14 @@ setup-node, upload-artifact et setup-gradle utilisent des versions avec runtime
 Node 24 vérifié dans leurs manifestes officiels.
 Le résultat de la nouvelle exécution GitHub reste à confirmer ; aucune exécution
 distante réussie n’est affirmée depuis cet environnement.
+
+
+### Révision après échec du job frontend
+
+Une capture ultérieure montre le backend réussi et le job frontend refusé par MongoDB
+pour le même noyau >= 6.19. L’horodatage est compatible avec le run du commit 808c2fa ;
+le passage à Ubuntu 24.04 n’est donc pas considéré comme une correction distante validée.
+Les deux jobs sont désormais fixés sur Ubuntu 22.04 ; le manifeste officiel runner-images
+consulté indique 6.8.0-1064-azure. Le helper affiche `uname -sr` pour identifier le noyau
+effectif. L’application et les tests ne sont pas modifiés ni désactivés. Le nouveau
+résultat distant reste à confirmer.

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Isolated CI database. Override name/port only when checking this helper locally.
 set -euo pipefail
+printf 'CI host kernel: %s\n' "$(uname -sr)"
 name="${MONGO_CONTAINER_NAME:-event-manager-ci-mongo}"
 port="${MONGO_PORT:-27017}"
 if [[ ! "$name" =~ ^[a-zA-Z0-9][a-zA-Z0-9_.-]*$ ]] || [[ ! "$port" =~ ^[0-9]+$ ]] || ((port < 1 || port > 65535)); then

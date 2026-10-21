@@ -51,7 +51,7 @@
   },
   "dockerSmoke": "passed: Nginx/CSP, authenticated MongoDB, login, booking, dashboard, logout, mobile layout, no browser errors",
   "nativeDevelopmentSmoke": "passed: scripts/dev.sh, readiness, Angular API proxy, signup, login, account cleanup",
-  "remoteCI": "Failure confirmed by user logs: MongoDB 8.0 rejects Linux kernels >=6.19. Both jobs pinned to ubuntu-24.04; Node 24 action runtimes verified from official manifests. Remote rerun pending.",
+  "remoteCI": "User screenshot: backend passed, frontend MongoDB still rejected kernel >=6.19 after Ubuntu 24.04 pin. Both jobs now pinned to ubuntu-22.04 (official documented kernel 6.8), actual kernel printed at startup; remote rerun pending.",
   "productionDeployment": "not published; operational hardening documented",
   "npmProductionAudit": {
     "info": 0,

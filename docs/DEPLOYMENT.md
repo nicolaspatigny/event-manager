@@ -84,4 +84,6 @@ L’image MongoDB 8.0 utilisée dans cette livraison refuse les noyaux Linux 6.1
 ou ultérieurs (voir https://jira.mongodb.org/browse/SERVER-121912). Les conteneurs
 partagent le noyau hôte : Docker ne contourne pas cette incompatibilité. Utiliser
 un hôte compatible ou une version MongoDB officiellement corrigée et revalidée.
-La CI est fixée sur Ubuntu 24.04 pour éviter la migration automatique vers Ubuntu 26.
+La CI est fixée sur Ubuntu 22.04 (noyau 6.8 dans son manifeste officiel). Une première
+fixation sur Ubuntu 24.04 n’a pas suffi sur le runner du job frontend ; le noyau
+effectif est désormais affiché dans les logs de démarrage.
