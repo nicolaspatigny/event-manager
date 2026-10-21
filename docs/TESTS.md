@@ -55,3 +55,9 @@ revendiquée tant qu’elle n’a pas eu lieu.
 
 Pas de pourcentage de couverture inventé. La réussite de ces tests prouve les scénarios
 exécutés, pas l’absence de toute vulnérabilité ni l’aptitude à une charge inconnue.
+
+
+Dans GitHub Actions, MongoDB démarre via `scripts/ci-mongo.sh` après le checkout,
+avec un ping explicite avant les tests. En cas de panne, consulter l’étape
+« Start MongoDB and wait for readiness » et `mongo-ci.log` dans les artefacts.
+Les tests ne sont ni ignorés ni remplacés en cas de base indisponible.

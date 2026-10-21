@@ -51,7 +51,7 @@
   },
   "dockerSmoke": "passed: Nginx/CSP, authenticated MongoDB, login, booking, dashboard, logout, mobile layout, no browser errors",
   "nativeDevelopmentSmoke": "passed: scripts/dev.sh, readiness, Angular API proxy, signup, login, account cleanup",
-  "remoteCI": "workflow supplied, not executed remotely",
+  "remoteCI": "User reported MongoDB service initialization failure. CI startup revised; helper and host connection verified locally. GitHub rerun pending.",
   "productionDeployment": "not published; operational hardening documented",
   "npmProductionAudit": {
     "info": 0,

@@ -39,7 +39,7 @@ logs complets non relus. Les captures test utilisent exclusivement des comptes f
 | Démarrage natif scripts/dev.sh | proxy Angular, readiness et parcours compte validés ; processus de test arrêtés |
 | Jeu fictif scripts/seed-demo.mjs | exécuté puis réexécuté sans doubler les six événements |
 | Diagrammes Mermaid | 5 diagrammes interprétés et exportés en SVG |
-| CI GitHub distante | fournie, non exécutée ici |
+| CI GitHub distante | échec de démarrage MongoDB signalé par l’utilisateur ; correction du démarrage testée localement, nouvelle exécution distante à vérifier |
 | Publication cloud / mise en production | non effectuée |
 
 Le site OWASP a refusé l’accès direct (403) ; la liste 2025 a été vérifiée à partir du
@@ -73,3 +73,16 @@ ou les tests humains d’accessibilité. Les configurations privées restent hor
 ![Tableau de bord participant fictif](evidence/screenshots/10-container-dashboard.png)
 
 ![Administration avec comptes de test](evidence/screenshots/06-administration.png)
+
+
+### Suivi du démarrage CI
+
+L’utilisateur a signalé un échec d’initialisation du service MongoDB avant exécution
+des tests GitHub. L’image et l’ancien health check ont démarré correctement en local ;
+la cause distante exacte n’est donc pas établie sans les logs du conteneur.
+Le workflow utilise désormais `scripts/ci-mongo.sh` après checkout : attente de
+readiness explicite (120 s maximum), erreur si le processus quitte, conservation
+des logs dans les artefacts des deux jobs et nettoyage en fin de job. Le script
+et une connexion MongoDB depuis l’hôte ont été validés sur un conteneur isolé local.
+Ce changement ne transforme pas une panne de base en test réussi ; une nouvelle
+exécution GitHub reste nécessaire pour confirmer le résultat distant.
