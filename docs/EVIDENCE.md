@@ -86,3 +86,17 @@ des logs dans les artefacts des deux jobs et nettoyage en fin de job. Le script
 et une connexion MongoDB depuis l’hôte ont été validés sur un conteneur isolé local.
 Ce changement ne transforme pas une panne de base en test réussi ; une nouvelle
 exécution GitHub reste nécessaire pour confirmer le résultat distant.
+
+
+### Cause confirmée de la panne CI
+
+Les logs fournis par l’utilisateur identifient la cause : l’image MongoDB 8.0
+(digest `4a4ab5d4834207389e0d7270fac988e21ffedccecba77991a552f755df229907`)
+refuse de démarrer sur un noyau Linux 6.19 ou ultérieur (MongoDB SERVER-121912).
+Le label `ubuntu-latest` migrait vers Ubuntu 26. Les deux jobs sont désormais
+fixés sur `ubuntu-24.04` ; le manifeste officiel runner-images consulté indique
+un noyau 6.17.0-1022-azure pour cette image. Les actions checkout, setup-java,
+setup-node, upload-artifact et setup-gradle utilisent des versions avec runtime
+Node 24 vérifié dans leurs manifestes officiels.
+Le résultat de la nouvelle exécution GitHub reste à confirmer ; aucune exécution
+distante réussie n’est affirmée depuis cet environnement.

@@ -76,3 +76,12 @@ cloud où le nom du proxy n’est pas résolu depuis Docker, fournir aussi un `e
 de build avec son adresse actuelle. Ne pas copier de jeton dans un ARG, ne pas désactiver
 TLS et ne pas désactiver les checksums. Le wrapper vérifie le SHA-256 officiel de sa
 distribution Gradle, enregistré dans gradle-wrapper.properties.
+
+
+## Compatibilité du noyau avec MongoDB
+
+L’image MongoDB 8.0 utilisée dans cette livraison refuse les noyaux Linux 6.19
+ou ultérieurs (voir https://jira.mongodb.org/browse/SERVER-121912). Les conteneurs
+partagent le noyau hôte : Docker ne contourne pas cette incompatibilité. Utiliser
+un hôte compatible ou une version MongoDB officiellement corrigée et revalidée.
+La CI est fixée sur Ubuntu 24.04 pour éviter la migration automatique vers Ubuntu 26.
