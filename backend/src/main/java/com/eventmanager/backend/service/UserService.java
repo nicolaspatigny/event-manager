@@ -1,77 +1,105 @@
 package com.eventmanager.backend.service;
 
-import com.eventmanager.backend.dto.RegisterRequest;
-import com.eventmanager.backend.dto.LoginRequest;
-import com.eventmanager.backend.dto.LoginResponse;
-import com.eventmanager.backend.dto.UserResponse;
+import com.eventmanager.backend.dto.*;
+import com.eventmanager.backend.exception.ApiException;
 import com.eventmanager.backend.model.User;
 import com.eventmanager.backend.repository.UserRepository;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 public class UserService {
+  private final UserRepository users;
+  private final PasswordEncoder encoder;
+  private final JwtService jwt;
+  private final MongoTemplate mongo;
+  private final AuditService audit;
+  private final String dummyHash;
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+  public UserService(
+      UserRepository users,
+      PasswordEncoder encoder,
+      JwtService jwt,
+      MongoTemplate mongo,
+      AuditService audit) {
+    this.users = users;
+    this.encoder = encoder;
+    this.jwt = jwt;
+    this.mongo = mongo;
+    this.audit = audit;
+    this.dummyHash = encoder.encode(java.util.UUID.randomUUID().toString());
+  }
 
-    public UserService(UserRepository userRepository,
-                   PasswordEncoder passwordEncoder,
-                   JwtService jwtService) {
-    this.userRepository = userRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.jwtService = jwtService;
-}
+  public static String email(String value) {
+    return value.strip().toLowerCase(Locale.ROOT);
+  }
 
-    public User register(RegisterRequest request) {
+  public User register(Requests.Register input) {
+    checkPassword(input.password());
+    User user = new User();
+    user.setFirstName(input.firstName().strip());
+    user.setLastName(input.lastName().strip());
+    user.setEmail(email(input.email()));
+    user.setPassword(encoder.encode(input.password()));
+    users.insert(user);
+    audit.record(user.getId(), "ACCOUNT_CREATED", user.getId());
+    return user;
+  }
 
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already registered");
-        }
-
-        User user = new User();
-
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setEmail(request.getEmail());
-
-        // Never store the password in plain text
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-
-        // Default role for newly registered users
-        user.setRole("USER");
-
-        user.setCreatedAt(LocalDateTime.now());
-
-        return userRepository.save(user);
+  public LoginResponse login(Requests.Login input) {
+    if (input.password().getBytes(StandardCharsets.UTF_8).length > 72)
+      throw ApiException.credentials();
+    User user = users.findByEmail(email(input.email())).orElse(null);
+    boolean matches =
+        encoder.matches(input.password(), user == null ? dummyHash : user.getPassword());
+    if (user == null || !matches || user.isDisabled()) {
+      audit.record(null, "LOGIN_FAILED", null);
+      throw ApiException.credentials();
     }
+    audit.record(user.getId(), "LOGIN", user.getId());
+    return new LoginResponse(jwt.generateToken(user), view(user));
+  }
 
-    public LoginResponse login(LoginRequest request) {
+  public UserResponse view(User u) {
+    return new UserResponse(
+        u.getId(), u.getFirstName(), u.getLastName(), u.getEmail(), u.getRole(), u.getCreatedAt());
+  }
 
-    User user = userRepository.findByEmail(request.getEmail())
-            .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+  public void revoke(User user) {
+    mongo.updateFirst(
+        Query.query(Criteria.where("id").is(user.getId())),
+        new Update().inc("tokenVersion", 1),
+        User.class);
+  }
 
-    if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-        throw new RuntimeException("Invalid email or password");
-    }
+  public void profile(User user, Requests.Profile input) {
+    mongo.updateFirst(
+        Query.query(Criteria.where("id").is(user.getId())),
+        new Update()
+            .set("firstName", input.firstName().strip())
+            .set("lastName", input.lastName().strip()),
+        User.class);
+    audit.record(user.getId(), "PROFILE_UPDATED", user.getId());
+  }
 
-    String token = jwtService.generateToken(
-            user.getEmail(),
-            user.getRole()
-    );
+  public void password(User user, Requests.Password input) {
+    if (!encoder.matches(input.currentPassword(), user.getPassword()))
+      throw ApiException.credentials();
+    checkPassword(input.newPassword());
+    mongo.updateFirst(
+        Query.query(Criteria.where("id").is(user.getId())),
+        new Update().set("password", encoder.encode(input.newPassword())).inc("tokenVersion", 1),
+        User.class);
+    audit.record(user.getId(), "PASSWORD_CHANGED", user.getId());
+  }
 
-    UserResponse userResponse = new UserResponse(
-            user.getId(),
-            user.getFirstName(),
-            user.getLastName(),
-            user.getEmail(),
-            user.getRole(),
-            user.getCreatedAt()
-    );
-
-    return new LoginResponse(token, userResponse);
-}
+  private void checkPassword(String password) {
+    if (password.getBytes(StandardCharsets.UTF_8).length > 72)
+      throw new ApiException(
+          org.springframework.http.HttpStatus.BAD_REQUEST, "Mot de passe limité à 72 octets UTF-8");
+  }
 }
